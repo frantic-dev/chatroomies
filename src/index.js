@@ -20,6 +20,8 @@ const db = getFirestore(app)
 onAuthStateChanged(auth, user => {
   if (user != null) {
     console.log('logged in')
+    const uid = user.uid
+    console.log(user)
   } else {
     console.log('not in')
   }
