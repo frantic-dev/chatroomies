@@ -1,6 +1,6 @@
 import { signInAnonymously, updateProfile, signOut, onAuthStateChanged, getAuth } from "firebase/auth"
 import { auth } from "../index"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
 const SignInForm = () => {
 
