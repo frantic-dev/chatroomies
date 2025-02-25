@@ -1,10 +1,19 @@
-import { signInAnonymously, updateProfile, signOut, onAuthStateChanged } from "firebase/auth"
+import { signInAnonymously, updateProfile, signOut, onAuthStateChanged, getAuth } from "firebase/auth"
 import { auth } from "../index"
 import { useEffect, useState } from "react"
 
 const SignInForm = () => {
 
   const [user, setUser] = useState(auth.currentUser)
+
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      setUser(auth.currentUser)
+    } else {
+      setUser(null)
+    }
+  })
+
 
   function signIn(e) {
     // prevent default page reload 
@@ -21,8 +30,6 @@ const SignInForm = () => {
         await updateProfile(result.user, {
           displayName: usernameInput.value
         })
-        // update user state
-        setUser(result.user)
       }).catch((error) => {
         const errorCode = error.errorCode
         const errorMessage = error.message
@@ -40,7 +47,6 @@ const SignInForm = () => {
     signOut(auth).then(() => {
       console.log('signed out successfully')
       // update user state to null
-      setUser(null)
     }).catch((error) => {
       const errorCode = error.errorCode
       const errorMessage = error.message
@@ -50,7 +56,7 @@ const SignInForm = () => {
     })
   }
 
-  function SignInForm() {
+  function Form() {
     return (
       <form>
         <label htmlFor="username"> Username
@@ -64,11 +70,11 @@ const SignInForm = () => {
   }
 
   return (
-    <>
+    <div id='signin-form'>
       {/* show sign in form if there is no current user and show sign out button if user is logged in */}
-      {user === null ? <SignInForm /> : <button onClick={signOutUser}>sign out</button>}
+      {user === null ? <Form /> : <button onClick={signOutUser}>sign out</button>}
 
-    </>
+    </div>
 
   )
 }

@@ -1,3 +1,8 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -18,6 +23,7 @@ a {
   color: #646cff;
   text-decoration: inherit;
 }
+
 a:hover {
   color: #535bf2;
 }
@@ -46,12 +52,44 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
 button:hover {
   border-color: #646cff;
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+#signin-form {
+  position: absolute;
+  width: 350px;
+  left: calc((99vw - 350px) / 2) ;
+}
+
+#chatroom-container {
+  border: 1px solid red;
+  width: 99vw;
+  height: 99vh;
+}
+
+#chatroom-container input {
+  width: calc(99vw - 85px);
+  height: 40px;
+  padding: 0;
+}
+
+#chatroom-input-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 55px;
+}
+
+#chatroom-messages {
+  border: 1px solid purple;
+  height: calc(99vh - 55px);
 }
 
 @media (prefers-color-scheme: light) {
@@ -59,9 +97,11 @@ button:focus-visible {
     color: #213547;
     background-color: #ffffff;
   }
+
   a:hover {
     color: #747bff;
   }
+
   button {
     background-color: #f9f9f9;
   }
