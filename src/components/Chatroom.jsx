@@ -1,14 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { auth, db } from "../index";
 import { onAuthStateChanged } from "firebase/auth";
 import { addDoc, collection, onSnapshot, query, orderBy } from "firebase/firestore";
-import questions from "../questions";
+import Question from "./Question";
+import "../chatroom.css";
 
 const Chatroom = () => {
-
   const [user, setUser] = useState(auth.currentUser);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     onAuthStateChanged(auth, user => {
@@ -31,8 +32,13 @@ const Chatroom = () => {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    // Scroll to the bottom of the messages container
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   async function sendMessage(e) {
-    e.preventDefault()
+    e.preventDefault();
     if (user) {
       try {
         await addDoc(collection(db, 'messages'), {
@@ -50,16 +56,18 @@ const Chatroom = () => {
 
   return (
     <div id="chatroom-container">
+      <Question />
       <div id="chatroom-messages">
         {messages.map(msg => (
           <div key={msg.id} className="message">
             <strong>{msg.userName}:</strong> {msg.message}
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
-      <form id="chatroom-input-container">
+      <form id="chatroom-input-container" onSubmit={sendMessage}>
         <input type="text" value={message} onChange={e => setMessage(e.target.value)} />
-        <button id="send-btn" onClick={sendMessage}>Send</button>
+        <button id="send-btn" type="submit">Send</button>
       </form>
     </div>
   );
