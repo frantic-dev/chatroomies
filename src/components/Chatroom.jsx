@@ -1,66 +1,68 @@
-import { useState } from "react"
-import { auth, db } from "../index"
-import { onAuthStateChanged } from "firebase/auth"
-import { addDoc, collection, getDoc } from "firebase/firestore"
+import { useState, useEffect } from "react";
+import { auth, db } from "../index";
+import { onAuthStateChanged } from "firebase/auth";
+import { addDoc, collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import questions from "../questions";
 
 const Chatroom = () => {
-  const [user, setUser] = useState(auth.currentUser)
-  const [message, setMessage] = useState('')
 
-  onAuthStateChanged(auth, user => {
+  const [user, setUser] = useState(auth.currentUser);
+  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        setUser(auth.currentUser);
+      } else {
+        setUser(null);
+      }
+    });
+
+    const q = query(collection(db, 'messages'), orderBy('timestamp'));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const messagesArray = [];
+      querySnapshot.forEach((doc) => {
+        messagesArray.push({ id: doc.id, ...doc.data() });
+      });
+      setMessages(messagesArray);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  async function sendMessage(e) {
+    e.preventDefault()
     if (user) {
-      setUser(auth.currentUser)
-    } else {
-      setUser(null)
-    }
-  })
-
-  async function sendMessage() {
-    if (user) {
-      console.log('it is working')
-
       try {
-        const docRef = await addDoc(collection(db, 'messages'), {
+        await addDoc(collection(db, 'messages'), {
           userId: user.uid,
           message: message,
           userName: user.displayName,
-        })
-        console.log(docRef.id, 'this is the doc ref')
-        const docSnap = await getDoc(docRef)
-
-        if (docSnap.exists()) {
-          console.log('document data', docSnap.data())
-          setMessage('')
-          const chatroomMessages = document.querySelector('#chatroom-messages')
-          const newDiv = document.createElement('div')
-          newDiv.className = 'message'
-          newDiv.textContent = docSnap.data().message
-          chatroomMessages.append(newDiv)
-
-        } else {
-          console.log('no such document exists!')
-        }
-
+          timestamp: new Date()
+        });
+        setMessage('');
       } catch (error) {
-        const errorCode = error.errorCode
-        const errorMessage = error.message
-
-        console.log(errorCode)
-        console.log(errorMessage)
+        console.error("Error sending message: ", error);
       }
     }
   }
 
   return (
     <div id="chatroom-container">
-      <div id="chatroom-messages"></div>
-      <div id="chatroom-input-container">
+      <div id="chatroom-messages">
+        {messages.map(msg => (
+          <div key={msg.id} className="message">
+            <strong>{msg.userName}:</strong> {msg.message}
+          </div>
+        ))}
+      </div>
+      <form id="chatroom-input-container">
         <input type="text" value={message} onChange={e => setMessage(e.target.value)} />
         <button id="send-btn" onClick={sendMessage}>Send</button>
-      </div>
-
+      </form>
     </div>
-  )
+  );
 }
 
-export default Chatroom
+export default Chatroom;
