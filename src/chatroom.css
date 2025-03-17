@@ -63,16 +63,26 @@
   border-radius: 4px;
 }
 
-#send-btn {
+.btn {
   padding: 10px 20px;
-  background-color: #007bff;
-  color: #ffffff;
   border: none;
   border-radius: 4px;
+  color: #ffffff;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
-#send-btn:hover {
-  background-color: #0056b3;
+.btn-medium {
+  font-size: 14px;
 }
+
+.btn-large {
+  font-size: 16px;
+  padding: 12px 24px;
+}
+
+.btn-small {
+  font-size: 12px;
+  padding: 8px 16px;
+}
+

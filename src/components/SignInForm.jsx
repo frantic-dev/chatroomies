@@ -1,6 +1,7 @@
 import { signInAnonymously, updateProfile, signOut, onAuthStateChanged, getAuth } from "firebase/auth"
 import { auth } from "../index"
 import { useState } from "react"
+import Button from './Button';
 
 const SignInForm = () => {
 
@@ -62,7 +63,7 @@ const SignInForm = () => {
         <label htmlFor="username"> Username
           <input type="text" id="username" />
         </label>
-        <button onClick={signIn}>sign in</button>
+        <Button onClick={signIn}>Sign In</Button>
       </form>
 
     )
@@ -72,7 +73,8 @@ const SignInForm = () => {
   return (
     <div id='signin-form'>
       {/* show sign in form if there is no current user and show sign out button if user is logged in */}
-      {user === null ? <Form /> : <button onClick={signOutUser}>sign out</button>}
+      {user === null ? <Form /> : <Button onClick={signOutUser}>Sign out</Button>
+      }
 
     </div>
 

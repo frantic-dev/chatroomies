@@ -4,6 +4,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { addDoc, collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import Question from "./Question";
 import "../chatroom.css";
+import Button from "./Button";
 
 const Chatroom = () => {
   const [user, setUser] = useState(auth.currentUser);
@@ -67,7 +68,7 @@ const Chatroom = () => {
       </div>
       <form id="chatroom-input-container" onSubmit={sendMessage}>
         <input type="text" value={message} onChange={e => setMessage(e.target.value)} />
-        <button id="send-btn" type="submit">Send</button>
+        <Button id="send-btn" type="submit">Send</Button>
       </form>
     </div>
   );
